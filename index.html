@@ -1,12 +1,22 @@
 <!doctype html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-	<title>Color Picker</title>
-</head>
-<body>
-
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="main.css">
+		<link rel="stylesheet" href="colorPicker.css">
+		<title>Color Picker</title>
+	</head>
+	<body class="h-100 d-flex justify-content-center align-items-center">
+		<div class="col-4" id="wrapper">
+			<div id="color-picker" class="d-flex justify-content-center"></div>
+		</div>
+		</div>
+	</body>
+	<script src="picker.js"></script>
+	<script>
+		const picker = new LoreeColorPicker('color-picker');
+		picker.initiate();
+	</script>
 </html>

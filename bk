@@ -8,9 +8,12 @@ class LoreeColorPicker {
 		this.color = "rgb(255, 0, 0)";
 		this.palette = null;
 		this.paletteContext = null;
+		this.paletteCircle = { x: 10, y: 10, width: 8, height: 8};
 		this.chooser = null;
+		this.chooserContext = null;
+		this.chooserCircle = { x: 8, y: 8, width: 6, height: 6};
 	}
-	
+
 	initiate() {
 		const element = document.getElementById(this.id);
 		if (!element) return;
@@ -20,7 +23,7 @@ class LoreeColorPicker {
 		this.attachPaletteWrapper();
 		this.attachChooserWrapper();
 	}
-	
+
 	// to change height and width of color palette
 	setDimension({width, height}) {
 		if (width && typeof width === 'number' && width > 0) {
@@ -30,27 +33,27 @@ class LoreeColorPicker {
 			this.height = height;
 		}
 	}
-	
+
 	// to update the color
 	setColor(color) {
 		this.color = color;
 		this.updateColorsInPalette();
 	}
-	
+
 	attachPaletteWrapper() {
 		const paletteWrapper = document.createElement('div');
 		paletteWrapper.className = "loree-custom-color-picker-palette-wrapper";
 		this.wrapper.appendChild(paletteWrapper);
 		this.attachPalette(paletteWrapper)
 	}
-	
+
 	attachChooserWrapper() {
 		const chooserWrapper = document.createElement('div');
 		chooserWrapper.className = "loree-custom-color-picker-chooser-wrapper";
 		this.wrapper.appendChild(chooserWrapper);
 		this.attachChooser(chooserWrapper)
 	}
-	
+
 	// attaches palette
 	attachPalette(paletteWrapper) {
 		this.palette = document.createElement('canvas');
@@ -58,9 +61,10 @@ class LoreeColorPicker {
 		this.palette.width = this.width;
 		this.palette.height = this.height;
 		paletteWrapper.appendChild(this.palette);
-		this.updateColorsInPalette()
+		this.updateColorsInPalette();
+		this.attachPaletteCircle();
 	}
-	
+
 	// attaches chooser
 	attachChooser(chooserWrapper) {
 		this.chooser = document.createElement('canvas');
@@ -68,9 +72,10 @@ class LoreeColorPicker {
 		this.chooser.width = this.width;
 		this.chooser.height = this.chooserHeight;
 		chooserWrapper.appendChild(this.chooser);
-		this.updateColorsInChooser()
+		this.updateColorsInChooser();
+		this.attachChooserCircle();
 	}
-	
+
 	updateColorsInPalette() {
 		this.paletteContext = this.palette.getContext("2d");
 		const gradient = this.paletteContext.createLinearGradient(0, 0, this.width, 0);
@@ -88,10 +93,19 @@ class LoreeColorPicker {
 		this.paletteContext.fillStyle = blackGradient;
 		this.paletteContext.fillRect(0, 0, this.width, this.height);
 	}
-	
+
+	attachPaletteCircle(){
+		this.paletteContext.beginPath();
+		this.paletteContext.arc(this.paletteCircle.x, this.paletteCircle.y, this.paletteCircle.width, 0, Math.PI * 2);
+		this.paletteContext.lineWidth = 3;
+		this.paletteContext.strokeStyle = "white";
+		this.paletteContext.stroke();
+		this.paletteContext.closePath();
+	}
+
 	updateColorsInChooser() {
-		const context = this.chooser.getContext("2d");
-		const gradient = context.createLinearGradient(0, 0, this.width, 0);
+		this.chooserContext = this.chooser.getContext("2d");
+		const gradient = this.chooserContext.createLinearGradient(0, 0, this.width, 0);
 		gradient.addColorStop(0, "rgb(255, 0, 0)");
 		gradient.addColorStop(0.15, "rgb(255, 0, 255)");
 		gradient.addColorStop(0.33, "rgb(0, 0, 255)");
@@ -99,9 +113,17 @@ class LoreeColorPicker {
 		gradient.addColorStop(0.67, "rgb(0, 255, 0)");
 		gradient.addColorStop(0.84, "rgb(255, 255, 0)");
 		gradient.addColorStop(1, "rgb(255, 0, 0)");
-		context.fillStyle = gradient;
-		context.fillRect(0, 0, this.width, this.chooserHeight);
+		this.chooserContext.fillStyle = gradient;
+		this.chooserContext.fillRect(0, 0, this.width, this.chooserHeight);
 	}
-	
-	
+
+	attachChooserCircle(){
+		this.chooserContext.beginPath();
+		this.chooserContext.arc(this.chooserCircle.x, this.chooserCircle.y, this.chooserCircle.width, 0, Math.PI * 2);
+		this.chooserContext.lineWidth = 3;
+		this.chooserContext.strokeStyle = "white";
+		this.chooserContext.stroke();
+		this.chooserContext.closePath();
+	}
+
 }

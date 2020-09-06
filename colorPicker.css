@@ -1,0 +1,31 @@
+
+.loree-custom-color-picker-palette-wrapper{
+	position: relative;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.loree-custom-color-picker-palette {
+	border-radius: 3px;
+}
+
+.loree-custom-color-picker-chooser-wrapper {
+	position: relative;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+.loree-custom-color-picker-chooser{
+	border-radius: 20px;
+}
+
+.loree-custom-color-picker-palette-button,
+.loree-custom-color-picker-chooser-button {
+	position: absolute;
+	height: 18px;
+	width: 18px;
+	border: 3px solid #fff;
+	outline: none !important;
+	border-radius: 50%;
+}
