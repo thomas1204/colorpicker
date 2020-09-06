@@ -8,7 +8,9 @@ class LoreeColorPicker {
 		this.color = "rgb(255, 0, 0)";
 		this.palette = null;
 		this.paletteContext = null;
+		this.paletteButton = null;
 		this.chooser = null;
+		this.chooserContext = null;
 	}
 	
 	initiate() {
@@ -61,6 +63,16 @@ class LoreeColorPicker {
 		this.updateColorsInPalette()
 	}
 	
+	// attaches palette chooser button
+	attachPaletteButton(paletteWrapper) {
+		this.paletteButton = document.createElement('button');
+		this.paletteButton.className = "loree-custom-color-picker-palette-button";
+		this.paletteButton.style.top = '-9px';
+		this.paletteButton.style.left = '-9px';
+		this.palette.appendChild(this.paletteButton);
+		this.updatePaletteButtonColor();
+	}
+	
 	// attaches chooser
 	attachChooser(chooserWrapper) {
 		this.chooser = document.createElement('canvas');
@@ -90,8 +102,8 @@ class LoreeColorPicker {
 	}
 	
 	updateColorsInChooser() {
-		const context = this.chooser.getContext("2d");
-		const gradient = context.createLinearGradient(0, 0, this.width, 0);
+		this.chooserContext = this.chooser.getContext("2d");
+		const gradient = this.chooserContext.createLinearGradient(0, 0, this.width, 0);
 		gradient.addColorStop(0, "rgb(255, 0, 0)");
 		gradient.addColorStop(0.15, "rgb(255, 0, 255)");
 		gradient.addColorStop(0.33, "rgb(0, 0, 255)");
@@ -99,8 +111,14 @@ class LoreeColorPicker {
 		gradient.addColorStop(0.67, "rgb(0, 255, 0)");
 		gradient.addColorStop(0.84, "rgb(255, 255, 0)");
 		gradient.addColorStop(1, "rgb(255, 0, 0)");
-		context.fillStyle = gradient;
-		context.fillRect(0, 0, this.width, this.chooserHeight);
+		this.chooserContext.fillStyle = gradient;
+		this.chooserContext.fillRect(0, 0, this.width, this.chooserHeight);
+	}
+	
+	updatePaletteButtonColor() {
+		console.log('this.paletteButton', this.paletteButton.parentElement.children);
+		const imageData = this.paletteContext.getImageData(this.paletteButton.offsetLeft, this.paletteButton.offsetTop, 18, 18);
+		this.paletteButton.style.backgroundColor = `rgba(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]},1)`;
 	}
 	
 	
