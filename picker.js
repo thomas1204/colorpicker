@@ -5,12 +5,13 @@ class LoreeColorPicker {
 		this.width = 300
 		this.height = 180
 		this.chooserHeight = 12;
-		this.color = "rgb(255, 0, 0)";
+		this.color = "green";
 		this.palette = null;
 		this.paletteContext = null;
-		this.paletteButton = null;
+		this.paletteCircle = { x: 4, y: 4, width: 10, height: 10};
 		this.chooser = null;
 		this.chooserContext = null;
+		this.chooserCircle = { x: 6, y: 6, width: 6, height: 6};
 	}
 	
 	initiate() {
@@ -39,6 +40,21 @@ class LoreeColorPicker {
 		this.updateColorsInPalette();
 	}
 	
+	// to get the color
+	getColor(){
+		const imageData = this.paletteContext.getImageData(this.paletteCircle.x, this.paletteCircle.y, 1, 1);
+		return this.changeRGBToHex(imageData.data[0], imageData.data[1], imageData.data[2]);
+	}
+	
+	changeRGBToHex(r, g, b){
+		return "#" + this.getHexValue(r) + this.getHexValue(g) + this.getHexValue(b);
+	}
+	
+	getHexValue(c) {
+		const hex = c.toString(16);
+		return hex.length === 1 ? "0" + hex : hex;
+	}
+	
 	attachPaletteWrapper() {
 		const paletteWrapper = document.createElement('div');
 		paletteWrapper.className = "loree-custom-color-picker-palette-wrapper";
@@ -60,17 +76,9 @@ class LoreeColorPicker {
 		this.palette.width = this.width;
 		this.palette.height = this.height;
 		paletteWrapper.appendChild(this.palette);
-		this.updateColorsInPalette()
-	}
-	
-	// attaches palette chooser button
-	attachPaletteButton(paletteWrapper) {
-		this.paletteButton = document.createElement('button');
-		this.paletteButton.className = "loree-custom-color-picker-palette-button";
-		this.paletteButton.style.top = '-9px';
-		this.paletteButton.style.left = '-9px';
-		this.palette.appendChild(this.paletteButton);
-		this.updatePaletteButtonColor();
+		this.updateColorsInPalette();
+		this.attachPaletteCircle();
+		this.paletteOnChange();
 	}
 	
 	// attaches chooser
@@ -80,7 +88,8 @@ class LoreeColorPicker {
 		this.chooser.width = this.width;
 		this.chooser.height = this.chooserHeight;
 		chooserWrapper.appendChild(this.chooser);
-		this.updateColorsInChooser()
+		this.updateColorsInChooser();
+		this.attachChooserCircle();
 	}
 	
 	updateColorsInPalette() {
@@ -115,11 +124,65 @@ class LoreeColorPicker {
 		this.chooserContext.fillRect(0, 0, this.width, this.chooserHeight);
 	}
 	
-	updatePaletteButtonColor() {
-		console.log('this.paletteButton', this.paletteButton.parentElement.children);
-		const imageData = this.paletteContext.getImageData(this.paletteButton.offsetLeft, this.paletteButton.offsetTop, 18, 18);
-		this.paletteButton.style.backgroundColor = `rgba(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]},1)`;
+	attachPaletteCircle(){
+		this.paletteContext.beginPath();
+		this.paletteContext.arc(this.paletteCircle.x, this.paletteCircle.y, this.paletteCircle.width, 0, Math.PI * 2);
+		this.paletteContext.lineWidth = 2.5;
+		this.paletteContext.strokeStyle = "white";
+		this.paletteContext.stroke();
+		this.paletteContext.closePath();
 	}
 	
+	attachChooserCircle(){
+		this.chooserContext.beginPath();
+		this.chooserContext.arc(this.chooserCircle.x, this.chooserCircle.y, this.chooserCircle.width, 0, Math.PI * 2);
+		this.chooserContext.lineWidth = 2.5;
+		this.chooserContext.strokeStyle = "white";
+		this.chooserContext.stroke();
+		this.chooserContext.fill = this.getChooserCircle();
+		this.chooserContext.closePath();
+	}
+	
+	getChooserCircle(){
+		const imageData = this.chooserContext.getImageData(this.chooserCircle.x, this.chooserCircle.y, 1, 1);
+		return this.changeRGBToHex(imageData.data[0], imageData.data[1], imageData.data[2]);
+	}
+	
+	paletteOnChange(){
+		let isMouseDown = false;
+		
+		const onMouseDown = (e) => {
+			let currentX = e.clientX - this.palette.offsetLeft;
+			let currentY = e.clientY - this.palette.offsetTop;
+			if(
+				currentY > this.paletteCircle.y &&
+				currentY < this.paletteCircle.y + this.paletteCircle.width &&
+				currentX > this.paletteCircle.x &&
+				currentX < this.paletteCircle.x + this.paletteCircle.width
+			) {
+				isMouseDown = true;
+			} else {
+				this.paletteCircle.x = currentX;
+				this.paletteCircle.y = currentY;
+			}
+		}
+		
+		const onMouseMove = (e) => {
+			if(isMouseDown) {
+				let currentX = e.clientX - this.palette.offsetLeft;
+				let currentY = e.clientY - this.palette.offsetTop;
+				this.paletteCircle.x = currentX;
+				this.paletteCircle.y = currentY;
+			}
+		}
+		
+		const onMouseUp = () => {
+			isMouseDown = false;
+		}
+		
+		this.palette.addEventListener("mousedown", onMouseDown);
+		this.palette.addEventListener("mousemove", onMouseMove);
+		document.addEventListener("mouseup", onMouseUp);
+	}
 	
 }
